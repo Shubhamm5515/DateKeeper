@@ -1,0 +1,25 @@
+# Python 3.13 Compatible Requirements
+fastapi==0.115.0
+uvicorn[standard]==0.32.0
+sqlalchemy==2.0.36
+python-dotenv==1.0.1
+pydantic==2.10.3
+pydantic-settings==2.6.1
+python-multipart==0.0.17
+apscheduler==3.10.4
+alembic==1.14.0
+
+# OCR - OCR.space API (Free, no billing required)
+Pillow==11.0.0
+python-dateutil==2.9.0
+requests==2.32.3
+
+# Email
+sendgrid==6.11.0
+
+# Auth (simplified for Python 3.13)
+PyJWT==2.9.0
+bcrypt==4.2.1
+
+# Ensure setuptools is up to date
+setuptools>=75.0.0
