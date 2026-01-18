@@ -33,5 +33,8 @@ razorpay==1.4.1
 # Production server
 gunicorn==21.2.0
 
+# PostgreSQL adapter (for production database)
+psycopg2-binary==2.9.9
+
 # For Python 3.13 compatibility
 setuptools>=75.0.0
