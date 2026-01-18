@@ -121,20 +121,71 @@ Update `document-reminder-system/frontend/package.json` (add build script if mis
 5. **Region**: Choose closest to you (e.g., Singapore)
 6. **Plan**: **Free** (0 GB RAM, expires after 90 days - we'll handle this)
 7. Click "Create Database"
-8. **Copy the Internal Database URL** (starts with `postgresql://`)
+8. **Wait 2-3 minutes** for database to initialize
+9. **Find the Internal Database URL**:
+   - On the database dashboard, scroll down to "Connections" section
+   - You'll see two URLs:
+     - **External Database URL** (starts with `postgres://`)
+     - **Internal Database URL** (starts with `postgresql://`)
+   - **Copy the INTERNAL Database URL** (click the 📋 copy icon)
+   - It looks like: `postgresql://datekeeper_user:xxxxx@dpg-xxxxx-internal/datekeeper`
+   - **Important**: Use INTERNAL, not External!
+   - Save this URL - you'll paste it in the next step
+
+**Visual Guide - What to Look For:**
+```
+┌─────────────────────────────────────────────────┐
+│ Connections                                     │
+├─────────────────────────────────────────────────┤
+│                                                 │
+│ External Database URL                           │
+│ postgres://datekeeper_user:xxx@dpg-xxx/db  📋  │ ← DON'T use this
+│                                                 │
+│ Internal Database URL                           │
+│ postgresql://datekeeper_user:xxx@dpg-xxx-      │
+│ internal/datekeeper                         📋  │ ← USE THIS ONE!
+│                                                 │
+│ PSQL Command                                    │
+│ psql -h dpg-xxx -U datekeeper_user datekeeper   │
+└─────────────────────────────────────────────────┘
+```
 
 #### 2.3 Deploy Backend Web Service
 
 1. Click "New +" → "Web Service"
-2. Connect your GitHub repository: `datekeeper`
-3. **Name**: `datekeeper-api`
-4. **Region**: Same as database
-5. **Branch**: `main`
-6. **Root Directory**: `backend`
-7. **Runtime**: `Python 3`
-8. **Build Command**: `pip install -r requirements.txt`
-9. **Start Command**: `gunicorn app.main:app --workers 1 --worker-class uvicorn.workers.UvicornWorker --bind 0.0.0.0:$PORT`
-10. **Plan**: **Free** (512 MB RAM, sleeps after 15 min inactivity)
+
+2. **Connect Your Repository**:
+   - If first time: Click "Connect account" → Authorize GitHub
+   - Select your repository: `datekeeper`
+   - Click "Connect"
+
+3. **Configure Service Settings**:
+
+   **Basic Information:**
+   - **Name**: `datekeeper-api`
+     - This becomes your URL: `https://datekeeper-api.onrender.com`
+   - **Region**: Same as your database (e.g., Singapore)
+   - **Branch**: `main`
+   - **Root Directory**: `backend` ⚠️ **IMPORTANT!**
+     - This tells Render to look in the backend folder
+
+   **Runtime & Build:**
+   - **Runtime**: `Python 3`
+   - **Build Command**: 
+     ```bash
+     pip install -r requirements.txt
+     ```
+   - **Start Command**: 
+     ```bash
+     gunicorn app.main:app --workers 1 --worker-class uvicorn.workers.UvicornWorker --bind 0.0.0.0:$PORT
+     ```
+
+   **Instance Type:**
+   - **Plan**: Select **Free** 
+     - 512 MB RAM
+     - 0.1 CPU
+     - Sleeps after 15 min inactivity
+     - 750 hours/month (enough for 24/7 with wake-up pings)
 
 #### 2.4 Add Environment Variables
 
