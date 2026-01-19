@@ -18,6 +18,8 @@ from app.auth import (
 )
 from app.config import settings
 import secrets
+from google.oauth2 import id_token
+from google.auth.transport import requests as google_requests
 
 router = APIRouter(prefix="/api/auth", tags=["Authentication"])
 
@@ -74,6 +76,9 @@ class ReminderSettings(BaseModel):
     reminder_intervals: dict | None = None
     notify_email: str | None = None
     notify_sms: str | None = None
+
+class GoogleLoginRequest(BaseModel):
+    token: str
 
 @router.post("/register", response_model=Token)
 def register(user_data: UserRegister, db: Session = Depends(get_db)):
@@ -280,10 +285,83 @@ def update_reminder_settings(
     }
 
 # Google OAuth Routes
+@router.post("/google/login", response_model=Token)
+async def google_login_with_token(
+    google_data: GoogleLoginRequest,
+    db: Session = Depends(get_db)
+):
+    """
+    Handle Google OAuth login with credential token from frontend
+    
+    Verifies Google token and creates/logs in user
+    """
+    try:
+        # Verify the Google token
+        idinfo = id_token.verify_oauth2_token(
+            google_data.token,
+            google_requests.Request(),
+            settings.GOOGLE_CLIENT_ID
+        )
+        
+        # Get user info from token
+        email = idinfo.get('email')
+        full_name = idinfo.get('name')
+        
+        if not email:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Email not provided by Google"
+            )
+        
+        # Check if user exists
+        user = db.query(User).filter(User.email == email).first()
+        
+        if not user:
+            # Create new user
+            random_password = secrets.token_urlsafe(32)
+            hashed_password = get_password_hash(random_password)
+            
+            user = User(
+                email=email,
+                hashed_password=hashed_password,
+                full_name=full_name,
+                notify_email="Y",
+                is_active=True
+            )
+            
+            db.add(user)
+            db.commit()
+            db.refresh(user)
+        
+        # Create access token
+        access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
+        access_token = create_access_token(
+            data={"sub": user.id},
+            expires_delta=access_token_expires
+        )
+        
+        return {
+            "access_token": access_token,
+            "token_type": "bearer",
+            "user": user.to_dict()
+        }
+        
+    except ValueError as e:
+        # Invalid token
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid Google token"
+        )
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Google authentication failed: {str(e)}"
+        )
+
 @router.get("/google/login")
 async def google_login(request: Request):
     """
-    Initiate Google OAuth login
+    Initiate Google OAuth login (redirect flow)
     
     Redirects user to Google login page
     """
