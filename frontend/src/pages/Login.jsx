@@ -21,6 +21,9 @@ function Login() {
     }
 
     setLoading(true);
+    toast.info('Signing in... This may take 30-60 seconds on first request.', {
+      autoClose: 5000
+    });
     try {
       await login(email, password);
     } catch (error) {
@@ -33,6 +36,9 @@ function Login() {
   const handleGoogleSuccess = async (credentialResponse) => {
     try {
       setLoading(true);
+      toast.info('Signing in with Google... This may take 30-60 seconds on first request.', {
+        autoClose: 5000
+      });
       
       // Send Google token to backend
       const response = await api.post('/api/auth/google/login', {

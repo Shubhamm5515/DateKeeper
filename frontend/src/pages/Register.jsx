@@ -28,6 +28,9 @@ function Register() {
     }
 
     setLoading(true);
+    toast.info('Creating your account... This may take 30-60 seconds on first request.', {
+      autoClose: 5000
+    });
     try {
       await register(email, password, fullName, phone);
     } catch (error) {
@@ -40,6 +43,9 @@ function Register() {
   const handleGoogleSuccess = async (credentialResponse) => {
     try {
       setLoading(true);
+      toast.info('Signing in with Google... This may take 30-60 seconds on first request.', {
+        autoClose: 5000
+      });
       
       // Send Google token to backend
       const response = await api.post('/api/auth/google/login', {
