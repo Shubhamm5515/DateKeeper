@@ -23,11 +23,11 @@ origins = [
     "http://localhost:5173",  # Vite default
     "http://localhost:3000",  # React default
     settings.FRONTEND_URL,
+    "https://date-keeper-ivory.vercel.app",  # Production frontend
 ]
 
-if settings.ENVIRONMENT == "production":
-    # Add your production frontend URL
-    origins.append("https://your-app.vercel.app")
+# Remove duplicates
+origins = list(set(origins))
 
 app.add_middleware(
     CORSMiddleware,
