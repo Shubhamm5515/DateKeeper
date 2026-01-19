@@ -1,34 +1,17 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { toast } from 'react-toastify';
 import DocumentForm from '../components/DocumentForm';
 import DocumentList from '../components/DocumentList';
-import api from '../services/api';
 import './Dashboard.css';
 
 function Dashboard() {
   const [refreshTrigger, setRefreshTrigger] = useState(0);
-  const [testingReminders, setTestingReminders] = useState(false);
   const { user, logout } = useAuth();
   const navigate = useNavigate();
 
   const handleDocumentAdded = () => {
     setRefreshTrigger(prev => prev + 1);
-  };
-
-  const handleTestReminders = async () => {
-    setTestingReminders(true);
-    try {
-      const response = await api.post('/api/scheduler/run-now');
-      toast.success('✅ Reminder check completed! Check your email inbox and server logs.');
-      console.log('Scheduler response:', response.data);
-    } catch (error) {
-      console.error('Test reminders error:', error);
-      toast.error('Failed to test reminders: ' + (error.response?.data?.detail || error.message));
-    } finally {
-      setTestingReminders(false);
-    }
   };
 
   return (
@@ -64,23 +47,6 @@ function Dashboard() {
                 📧 Reminders will be sent to: <strong>{user?.email}</strong>
               </p>
             </div>
-            <button 
-              className="btn-test-reminders" 
-              onClick={handleTestReminders}
-              disabled={testingReminders}
-            >
-              {testingReminders ? (
-                <>
-                  <span className="spinner">⏳</span>
-                  Testing...
-                </>
-              ) : (
-                <>
-                  <span className="icon">🔔</span>
-                  Test Reminders
-                </>
-              )}
-            </button>
           </div>
         </section>
 
