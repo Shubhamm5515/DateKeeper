@@ -226,6 +226,26 @@ def get_reminder_settings(
     - notify_email: Email notification preference
     - notify_sms: SMS notification preference
     """
+    from fastapi import Response
+    
+    # Add cache headers for 5 minutes
+    response = Response(
+        content={
+            "alternate_email": current_user.alternate_email,
+            "reminder_intervals": current_user.reminder_intervals or {
+                "6_months": True,
+                "3_months": True,
+                "1_month": True,
+                "7_days": True
+            },
+            "notify_email": current_user.notify_email,
+            "notify_sms": current_user.notify_sms
+        },
+        headers={
+            "Cache-Control": "private, max-age=300"  # Cache for 5 minutes
+        }
+    )
+    
     return {
         "alternate_email": current_user.alternate_email,
         "reminder_intervals": current_user.reminder_intervals or {

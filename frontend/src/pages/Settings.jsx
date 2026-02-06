@@ -97,6 +97,9 @@ function Settings() {
       <div className="settings-loading">
         <div className="spinner">⏳</div>
         <p>Loading settings...</p>
+        <p className="loading-hint">
+          ℹ️ First load may take 30-60 seconds if backend is waking up
+        </p>
       </div>
     );
   }

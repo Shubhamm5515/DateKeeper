@@ -1,0 +1,37 @@
+name: Keep Backend Alive
+
+on:
+  schedule:
+    # Run every 10 minutes to prevent Render free tier from spinning down
+    - cron: '*/10 * * * *'
+  workflow_dispatch: # Allow manual trigger from Actions tab
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping Backend Health Endpoint
+        run: |
+          echo "🔄 Pinging backend to keep it alive..."
+          response=$(curl -s -o /dev/null -w "%{http_code}" https://datekeeper-1.onrender.com/health || echo "000")
+          
+          if [ "$response" = "200" ]; then
+            echo "✅ Backend is alive and healthy (HTTP $response)"
+          elif [ "$response" = "000" ]; then
+            echo "⏳ Backend might be starting up (cold start)..."
+            sleep 30
+            response=$(curl -s -o /dev/null -w "%{http_code}" https://datekeeper-1.onrender.com/health || echo "000")
+            if [ "$response" = "200" ]; then
+              echo "✅ Backend is now alive (HTTP $response)"
+            else
+              echo "❌ Backend failed to respond (HTTP $response)"
+              exit 1
+            fi
+          else
+            echo "⚠️ Backend responded with HTTP $response"
+          fi
+          
+      - name: Ping Scheduler Endpoint
+        run: |
+          echo "🔄 Checking scheduler status..."
+          curl -s https://datekeeper-1.onrender.com/api/scheduler/health || echo "Scheduler check completed"
