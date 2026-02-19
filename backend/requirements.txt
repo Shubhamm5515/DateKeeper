@@ -1,16 +1,32 @@
+# Core dependencies - install first
+setuptools>=75.0.0
+wheel>=0.42.0
+
+# Web framework
 fastapi==0.115.0
 uvicorn[standard]==0.32.0
+
+# Database
 sqlalchemy==2.0.36
+alembic==1.14.0
+psycopg2-binary==2.9.9
+
+# Configuration
 python-dotenv==1.0.1
 pydantic==2.10.3
 pydantic-settings==2.6.1
 pydantic[email]==2.10.3
+
+# Authentication
 python-jose[cryptography]==3.3.0
 passlib[bcrypt]==1.7.4
 bcrypt==4.0.1
+
+# File handling
 python-multipart==0.0.17
+
+# Scheduling
 apscheduler==3.10.4
-alembic==1.14.0
 
 # OCR - OCR.space API (Free, no billing required)
 Pillow==11.0.0
@@ -32,16 +48,7 @@ itsdangerous==2.1.2
 # AI - Gemini for intelligent date extraction
 google-generativeai==0.8.3
 
-# Payment Gateway - Razorpay
-razorpay==1.4.1
-
 # Production server
 gunicorn==21.2.0
 
-# PostgreSQL adapter (for production database)
-psycopg2-binary==2.9.9
-
-# For Python 3.11 compatibility
-setuptools>=75.0.0
-
-# Last updated: 2026-01-18 - All dependencies verified
+# Last updated: 2026-02-19 - Fixed pkg_resources issue

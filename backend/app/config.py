@@ -43,13 +43,6 @@ class Settings(BaseSettings):
     SENDGRID_API_KEY: Optional[str] = None
     SENDGRID_FROM_EMAIL: str = "noreply@example.com"
     
-    # Razorpay Payment Gateway
-    RAZORPAY_KEY_ID: Optional[str] = None
-    RAZORPAY_KEY_SECRET: Optional[str] = None
-    RAZORPAY_WEBHOOK_SECRET: Optional[str] = None
-    RAZORPAY_PLAN_PRO: Optional[str] = None
-    RAZORPAY_PLAN_BUSINESS: Optional[str] = None
-    
     # CORS
     FRONTEND_URL: str = "http://localhost:5173"
     

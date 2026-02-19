@@ -25,7 +25,6 @@ class User(Base):
     # Subscription fields
     subscription_tier = Column(String(20), default="free")  # free, pro, business, enterprise
     subscription_status = Column(String(20), default="active")  # active, cancelled, expired
-    razorpay_subscription_id = Column(String(255), nullable=True)
     document_limit = Column(String(10), default="10")  # "10" for free, "-1" for unlimited
     
     # Account status
@@ -78,5 +77,6 @@ class User(Base):
             "document_limit": self.document_limit or "10",
             "is_active": self.is_active,
             "is_verified": self.is_verified,
-            "created_at": self.created_at.isoformat() if self.created_at else None
+            "created_at": self.created_at.isoformat() if self.created_at else None,
+            "updated_at": self.updated_at.isoformat() if self.updated_at else None
         }

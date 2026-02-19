@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.config import settings
 from app.database import engine, Base
-from app.routers import ocr, documents, scheduler, auth, google_auth, razorpay_subscription
+from app.routers import ocr, documents, scheduler, auth, google_auth
 from app.scheduler import start_scheduler, stop_scheduler
 
 # Import models to create tables
@@ -43,7 +43,6 @@ app.include_router(google_auth.router)
 app.include_router(ocr.router)
 app.include_router(documents.router)
 app.include_router(scheduler.router)
-app.include_router(razorpay_subscription.router)
 
 @app.on_event("startup")
 def startup_event():
